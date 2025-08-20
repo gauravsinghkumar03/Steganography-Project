@@ -1,180 +1,195 @@
+
+---
+
 # **Steganography Web Application**
 
-A comprehensive web-based steganography platform that enables users to securely hide and extract secret messages within multiple file formats using advanced digital watermarking techniques.
-
-
-
-## 🌟 **Features**
-
-### Multi-Format Steganography
-
-* **Images** → PNG, JPG, JPEG, BMP (LSB encoding)
-* **Audio** → MP3, WAV (audio LSB manipulation)
-* **Documents** → PDF, DOCX, TXT (metadata & comments)
-* **Videos** → MP4, AVI (frame-based encoding)
-
-### Security & Privacy
-
-* AES-256 encryption with optional password protection
-* SHA-256 password hashing for secure handling
-* Server-side processing with strict validation
-* Automatic deletion of uploaded files after processing
-
-### User Experience
-
-* Modern and responsive design powered by Bootstrap 5
-* Mobile-friendly UI with clean navigation
-* Real-time previews of selected carrier files
-* Fast and optimized encoding/decoding workflows
-* One-click downloads of processed files
+A comprehensive **web-based steganography platform** that allows users to securely hide and extract secret messages within images, audio, documents, and videos using advanced digital watermarking techniques.
 
 ---
 
-## 🛠️ **Technology Stack**
+## 🌟 Features
 
-**Backend:** Flask, Python, OpenCV, Pillow, PyDub, Wave, MoviePy, PyPDF2, python-docx, Cryptography
-**Frontend:** Bootstrap 5, Font Awesome, Custom CSS, Vanilla JavaScript
-**Utilities:** FFmpeg for audio/video handling
+* **Multi-format support** → Images, Audio, Documents, Videos
+* **AES-256 encryption** with password protection
+* **Secure server-side processing** with file validation
+* **Modern UI** with responsive Bootstrap 5 design
+* **Fast encoding/decoding** optimized for large files
+* **Automatic file cleanup** after processing
 
 ---
 
-## 📦 **Installation & Setup**
+## 🛠️ Technology Stack
 
-### Prerequisites
+* **Backend** → Flask, Python, OpenCV, Pillow, PyDub, Wave, MoviePy, PyPDF2, python-docx, Cryptography
+* **Frontend** → Bootstrap 5, Font Awesome, Custom CSS, Vanilla JavaScript
+* **Utilities** → FFmpeg for audio/video processing
 
-* Python 3.9 or higher
+---
+
+## 📦 Installation & Setup
+
+**Requirements**
+
+* Python 3.9+
 * pip (Python package manager)
-* FFmpeg installed and available in PATH
+* FFmpeg installed and added to PATH
 
-### Steps
+**Steps**
 
 1. Clone the repository
 2. Create and activate a virtual environment
-3. Install dependencies with pip
-4. Install FFmpeg (Windows, Mac, or Linux)
-5. Run the Flask app and visit `http://localhost:5000`
+3. Install dependencies from `requirements.txt`
+4. Install FFmpeg (Windows: `winget install Gyan.FFmpeg`, Mac: `brew install ffmpeg`, Linux: `sudo apt install ffmpeg`)
+5. Run the application with `python app.py` and visit `http://localhost:5000`
 
 ---
 
-## 🐳 **Docker Setup (Alternative Quick Start)**
+## 🐳 Docker Setup (Optional)
 
-For users who prefer containerized setup:
+For quick setup, you can build and run the project with Docker:
 
-1. Build the image with Docker
-2. Run the container mapping port 5000
-3. Access the app in your browser at `http://localhost:5000`
+* Build the image with `docker build -t stegapp .`
+* Run the container with `docker run -p 5000:5000 stegapp`
+* Access the app at `http://localhost:5000`
 
 ---
 
-## 🚀 **Usage Guide**
+## 🚀 Usage Guide
 
 ### Hiding Data
 
-1. Choose the file type (Image, Audio, Document, Video)
+1. Choose the carrier file type (Image, Audio, Document, Video)
 2. Upload the carrier file
 3. Enter the secret message
-4. Optionally set a password for encryption
-5. Process the file to embed the message
-6. Download the modified file
+4. Optionally add a password for encryption
+5. Process and download the stego file
 
 ### Extracting Data
 
-1. Choose the file type
+1. Select the file type
 2. Upload the stego file
-3. Provide the password (if required)
-4. Extract the hidden message
+3. Enter password if required
+4. Extract and view the hidden message
 
 ---
 
-## 🎥 **Demo**
+## 🎥 Demo
 
 ![App Demo](docs/demo.gif)
-*A short animation showing the process of hiding and extracting data.*
+*A short demo showing the process of hiding and extracting data.*
 
 ---
 
-## 📁 **Project Structure**
+## 📁 Project Structure
 
+```
 stegapp/
 ├── app.py                 # Main Flask application
 ├── steganography.py       # Core steganography algorithms
 ├── encryption.py          # Encryption/decryption functions
 ├── requirements.txt       # Python dependencies
-├── LICENSE               # MIT License
-├── README.md             # This file
+├── LICENSE                # MIT License
+├── README.md              # Project documentation
 │
-├── static/               # Static assets
+├── static/                # Static assets
 │   ├── css/
-│   │   └── style.css     # Custom styles
+│   │   └── style.css      # Custom styles
 │   ├── js/
-│   │   └── main.js       # Frontend functionality
-│   ├── uploads/          # Temporary upload storage
-│   └── processed/        # Processed files storage
+│   │   └── main.js        # Frontend functionality
+│   ├── uploads/           # Temporary upload storage
+│   └── processed/         # Processed files storage
 │
-└── templates/            # HTML templates
-    └── index.html        # Main application interface
+└── templates/             # HTML templates
+    └── index.html         # Main application interface
+```
 
+---
 
-## 🔒 **Security Considerations**
+## 📡 Planned API Endpoints
+
+* `POST /api/hide` → Hide secret in carrier file
+* `POST /api/extract` → Extract hidden data
+* `GET /api/status` → Health check
+
+---
+
+## 🔒 Security Considerations
 
 * Maximum upload size: 50MB
-* File type and MIME validation enforced
-* Path sanitization against directory traversal
-* Uploaded files deleted automatically after processing
-* Comprehensive error handling for safe execution
+* Strict MIME type validation
+* Path sanitization against traversal attacks
+* Automatic deletion of uploaded files
+* Robust error handling for safety
 
 ---
 
-## 📊 **Performance Metrics**
+## 📊 Performance Metrics
 
-| Operation         | Average Time | Maximum File Size |
-| ----------------- | ------------ | ----------------- |
-| Image Processing  | 0.5 – 2s     | 10MP images       |
-| Audio Processing  | 2 – 5s       | 10 min audio      |
-| Document Handling | 1 – 3s       | 50-page PDF       |
-| Video Processing  | 10 – 30s     | 2 min video       |
+| Operation         | Avg Time      | Max File Size |
+| ----------------- | ------------- | ------------- |
+| Image Processing  | 0.5–2 seconds | 10MP images   |
+| Audio Processing  | 2–5 seconds   | 10 min audio  |
+| Document Handling | 1–3 seconds   | 50-page PDF   |
+| Video Processing  | 10–30 seconds | 2 min video   |
 
 ---
 
-## 🤝 **Contributing**
+## 🤝 Contributing
 
 We welcome contributions!
 
-1. Fork the repository
-2. Create a feature branch
-3. Commit changes with clear messages
-4. Push to your branch
-5. Open a Pull Request
+* Fork the repository
+* Create a feature branch
+* Commit with clear messages
+* Push changes and open a PR
 
-## 📝 **License**
-This project is licensed under the MIT License – see the LICENSE file for details.
+See **CONTRIBUTING.md** for more details.
 
-## 🙏 **Acknowledgments**
+---
 
-* OpenCV for image manipulation
-* FFmpeg for audio/video processing
-* Bootstrap for UI components
-* Flask community for excellent documentation
-  
-## 📞 **Support**
+## 📝 License
 
-* Check the Issues page for known bugs
-* Open a new issue with steps to reproduce if needed
-* Include error logs or screenshots for faster help
+This project is licensed under the **MIT License**. See the LICENSE file for details.
 
-## 🚀 **Future Enhancements**
-* Batch file processing
+---
+
+## 🙏 Acknowledgments
+
+* OpenCV team for image processing
+* FFmpeg project for audio/video handling
+* Bootstrap community for UI components
+* Flask for backend framework
+
+---
+
+## 📞 Support
+
+* Check the Issues page for existing bugs
+* Open a new issue with detailed steps to reproduce
+* Attach error messages or screenshots for faster help
+
+---
+
+## 🚀 Future Enhancements
+
+* Batch processing of multiple files
 * Cloud storage integration
-* Stronger encryption algorithms
-* Mobile app (Android & iOS)
-* API endpoints for developers
-* Plugin system for custom algorithms
+* Advanced encryption algorithms
+* Android/iOS mobile app
+* Public API endpoints
+* Plugin system for custom steganography methods
 
+---
 
-⭐ If you found this project helpful, don’t forget to star the repo!
+⭐ If this project helped you, please consider **starring the repo**!
 
-🔗 Connect with the developer: [GitHub Profile](https://github.com/your-username)
-🐛 Report issues: [Issues Page](../../issues)
+🔗 Developer: [Your GitHub Profile](https://github.com/your-username)
+🐛 Issues: [Open Here](../../issues)
 
+---
 
+*Built with ❤️ using Python and Flask*
 
+---
+
+Would you like me to also **prepare CONTRIBUTING.md + docs folder structure** (with a placeholder `demo.gif` and API docs) so the repo looks production-ready?
