@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steganography Tool</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h1 class="display-4"><i class="fas fa-user-secret me-2"></i>Steganography Tool</h1>
+            <p class="lead">Hide and extract secret messages in files</p>
+        </div>
+
+        <div class="card shadow-lg">
+            <div class="card-header">
+                <ul class="nav nav-tabs card-header-tabs" id="fileTabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-bs-toggle="tab" href="#image-tab">
+                            <i class="fas fa-image me-2"></i>Image
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#audio-tab">
+                            <i class="fas fa-music me-2"></i>Audio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#document-tab">
+                            <i class="fas fa-file-alt me-2"></i>Document
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-bs-toggle="tab" href="#video-tab">
+                            <i class="fas fa-video me-2"></i>Video
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="card-body">
+                <div class="tab-content">
+                    <!-- Image Tab -->
+                    <div class="tab-pane fade show active" id="image-tab">
+                        <form id="imageForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Upload Image</label>
+                                <input type="file" class="form-control" id="imageFile" accept="image/*" required>
+                                <div class="file-upload-preview mt-2 d-none">
+                                    <img id="imagePreview" class="img-thumbnail" style="max-height: 200px;">
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Operation</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="imageOperation" id="imageHide" value="hide" checked>
+                                    <label class="form-check-label" for="imageHide">
+                                        Hide Data
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="imageOperation" id="imageExtract" value="extract">
+                                    <label class="form-check-label" for="imageExtract">
+                                        Extract Data
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="imageSecretDataGroup">
+                                <label class="form-label">Secret Message</label>
+                                <textarea class="form-control" id="imageSecretData" rows="3" placeholder="Enter your secret message"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="imageEncrypt">
+                                    <label class="form-check-label" for="imageEncrypt">
+                                        Encrypt with password
+                                    </label>
+                                </div>
+                                <input type="password" class="form-control mt-2 d-none" id="imagePassword" placeholder="Enter password">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-cog me-2"></i>Process
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Audio Tab -->
+                    <div class="tab-pane fade" id="audio-tab">
+                        <form id="audioForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Upload Audio</label>
+                                <input type="file" class="form-control" id="audioFile" accept="audio/*" required>
+                                <div class="file-upload-preview mt-2 d-none">
+                                    <div class="audio-preview bg-light p-3 rounded">
+                                        <i class="fas fa-file-audio fa-3x"></i>
+                                        <p class="mt-2 mb-0" id="audioFilename">No file selected</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Operation</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="audioOperation" id="audioHide" value="hide" checked>
+                                    <label class="form-check-label" for="audioHide">
+                                        Hide Data
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="audioOperation" id="audioExtract" value="extract">
+                                    <label class="form-check-label" for="audioExtract">
+                                        Extract Data
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="audioSecretDataGroup">
+                                <label class="form-label">Secret Message</label>
+                                <textarea class="form-control" id="audioSecretData" rows="3" placeholder="Enter your secret message"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="audioEncrypt">
+                                    <label class="form-check-label" for="audioEncrypt">
+                                        Encrypt with password
+                                    </label>
+                                </div>
+                                <input type="password" class="form-control mt-2 d-none" id="audioPassword" placeholder="Enter password">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-cog me-2"></i>Process
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Document Tab -->
+                    <div class="tab-pane fade" id="document-tab">
+                        <form id="documentForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Upload Document</label>
+                                <input type="file" class="form-control" id="documentFile" accept=".pdf,.docx,.txt" required>
+                                <div class="file-upload-preview mt-2 d-none">
+                                    <div class="document-preview bg-light p-3 rounded">
+                                        <i class="fas fa-file-alt fa-3x"></i>
+                                        <p class="mt-2 mb-0" id="documentFilename">No file selected</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Operation</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="documentOperation" id="documentHide" value="hide" checked>
+                                    <label class="form-check-label" for="documentHide">
+                                        Hide Data
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="documentOperation" id="documentExtract" value="extract">
+                                    <label class="form-check-label" for="documentExtract">
+                                        Extract Data
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="documentSecretDataGroup">
+                                <label class="form-label">Secret Message</label>
+                                <textarea class="form-control" id="documentSecretData" rows="3" placeholder="Enter your secret message"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="documentEncrypt">
+                                    <label class="form-check-label" for="documentEncrypt">
+                                        Encrypt with password
+                                    </label>
+                                </div>
+                                <input type="password" class="form-control mt-2 d-none" id="documentPassword" placeholder="Enter password">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-cog me-2"></i>Process
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Video Tab -->
+                    <div class="tab-pane fade" id="video-tab">
+                        <form id="videoForm" enctype="multipart/form-data">
+                            <div class="mb-3">
+                                <label class="form-label">Upload Video</label>
+                                <input type="file" class="form-control" id="videoFile" accept="video/*" required>
+                                <div class="file-upload-preview mt-2 d-none">
+                                    <video id="videoPreview" class="img-thumbnail" controls style="max-height: 200px;"></video>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Operation</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="videoOperation" id="videoHide" value="hide" checked>
+                                    <label class="form-check-label" for="videoHide">
+                                        Hide Data
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="videoOperation" id="videoExtract" value="extract">
+                                    <label class="form-check-label" for="videoExtract">
+                                        Extract Data
+                                    </label>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3" id="videoSecretDataGroup">
+                                <label class="form-label">Secret Message</label>
+                                <textarea class="form-control" id="videoSecretData" rows="3" placeholder="Enter your secret message"></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="videoEncrypt">
+                                    <label class="form-check-label" for="videoEncrypt">
+                                        Encrypt with password
+                                    </label>
+                                </div>
+                                <input type="password" class="form-control mt-2 d-none" id="videoPassword" placeholder="Enter password">
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-cog me-2"></i>Process
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Modal -->
+        <div class="modal fade" id="resultsModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="resultsModalTitle">Processing Results</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="resultsModalBody">
+                        <!-- Content will be inserted here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <a id="downloadBtn" class="btn btn-primary d-none" download>
+                            <i class="fas fa-download me-2"></i>Download
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
