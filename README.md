@@ -103,13 +103,6 @@ stegapp/
     └── index.html         # Main application interface
 ```
 
----
-
-## 📡 Planned API Endpoints
-
-* `POST /api/hide` → Hide secret in carrier file
-* `POST /api/extract` → Extract hidden data
-* `GET /api/status` → Health check
 
 ---
 
