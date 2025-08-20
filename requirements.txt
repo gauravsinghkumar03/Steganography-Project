@@ -1,0 +1,36 @@
+# Web Framework
+Flask==2.3.3
+Werkzeug==2.3.7
+
+# Image Processing
+Pillow==10.0.1
+opencv-python==4.8.1.78
+opencv-python-headless==4.8.1.78  # Alternative for server environments
+
+# Audio Processing
+pydub==0.25.1
+wave==0.0.2
+
+# Video Processing
+moviepy==1.0.3
+imageio==2.31.1
+imageio-ffmpeg==0.4.8
+
+# Document Processing
+PyPDF2==3.0.1
+python-docx==1.1.0
+
+# Encryption & Security
+cryptography==41.0.4
+pycryptodome==3.19.0
+
+# Data Processing & Utilities
+numpy==1.24.3
+python-dotenv==1.0.0
+
+# Development & Testing
+blinker==1.6.3
+click==8.1.7
+itsdangerous==2.1.2
+Jinja2==3.1.2
+MarkupSafe==2.1.3
