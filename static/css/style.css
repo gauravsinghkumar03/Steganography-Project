@@ -1,0 +1,137 @@
+:root {
+    --image-color: #3498db;
+    --audio-color: #9b59b6;
+    --document-color: #e67e22;
+    --video-color: #e74c3c;
+}
+
+body {
+    background-color: #f8f9fa;
+    color: #2c3e50;
+    padding-bottom: 50px;
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+    background-color: #f8f9fa;
+    padding: 0;
+}
+
+/* Tab Styling - Distinct Colors */
+.nav-tabs {
+    border-bottom: none;
+}
+
+.nav-tabs .nav-link {
+    color: #ffffff;
+    border: none;
+    border-radius: 0;
+    padding: 12px 20px;
+    transition: all 0.3s;
+    position: relative;
+    font-weight: 500;
+}
+
+/* Image Tab */
+.nav-tabs .nav-link[href="#image-tab"] {
+    background-color: var(--image-color);
+}
+
+/* Audio Tab */
+.nav-tabs .nav-link[href="#audio-tab"] {
+    background-color: var(--audio-color);
+}
+
+/* Document Tab */
+.nav-tabs .nav-link[href="#document-tab"] {
+    background-color: var(--document-color);
+}
+
+/* Video Tab */
+.nav-tabs .nav-link[href="#video-tab"] {
+    background-color: var(--video-color);
+}
+
+.nav-tabs .nav-link.active {
+    color: #ffffff;
+    font-weight: bold;
+    transform: translateY(-2px);
+    box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+}
+
+.nav-tabs .nav-link.active[href="#image-tab"] {
+    background-color: var(--image-color);
+    border-bottom: 3px solid darken(var(--image-color), 10%);
+}
+
+.nav-tabs .nav-link.active[href="#audio-tab"] {
+    background-color: var(--audio-color);
+    border-bottom: 3px solid darken(var(--audio-color), 10%);
+}
+
+.nav-tabs .nav-link.active[href="#document-tab"] {
+    background-color: var(--document-color);
+    border-bottom: 3px solid darken(var(--document-color), 10%);
+}
+
+.nav-tabs .nav-link.active[href="#video-tab"] {
+    background-color: var(--video-color);
+    border-bottom: 3px solid darken(var(--video-color), 10%);
+}
+
+.nav-tabs .nav-link:hover:not(.active) {
+    filter: brightness(1.1);
+}
+
+/* Form Styling */
+.form-label {
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: #2c3e50;
+    border-color: #2c3e50;
+    padding: 10px 25px;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    background-color: #1a2530;
+    border-color: #1a2530;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.file-upload-preview {
+    text-align: center;
+}
+
+.audio-preview, .document-preview {
+    text-align: center;
+    padding: 15px;
+}
+
+/* Modal Styling */
+.modal-content {
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .nav-tabs .nav-link {
+        padding: 10px 15px;
+        font-size: 14px;
+    }
+    
+    .card-body {
+        padding: 15px;
+    }
+}
