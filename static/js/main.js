@@ -1,207 +1,233 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Bootstrap tabs
-    const tabTriggerList = [].slice.call(document.querySelectorAll('#fileTabs a'));
-    const tabList = tabTriggerList.map(function (tabTriggerEl) {
-        return new bootstrap.Tab(tabTriggerEl);
-    });
+let currentMode = 'hide';
+let currentTab = 'image';
+
+// Set operation mode
+function setOperationMode(mode) {
+    currentMode = mode;
     
-    // Handle tab change events
-    document.getElementById('fileTabs').addEventListener('shown.bs.tab', function (event) {
-        resetAllForms();
-        const activeTab = event.target.getAttribute('href');
-        
-        // Hide all previews
-        document.querySelectorAll('.file-upload-preview').forEach(preview => {
-            preview.classList.add('d-none');
-        });
-        
-        // Reset file inputs
-        document.querySelectorAll('input[type="file"]').forEach(input => {
-            input.value = '';
-        });
-    });
+    // Update button states
+    document.getElementById('hide-mode').classList.remove('active');
+    document.getElementById('extract-mode').classList.remove('active');
+    document.getElementById(mode + '-mode').classList.add('active');
+
+    // Update body class for CSS targeting
+    document.body.className = mode === 'extract' ? 'extract-mode' : '';
+}
+
+// Switch tabs
+function switchTab(tabName) {
+    currentTab = tabName;
     
-    // Setup file previews
-    setupFilePreview('imageFile', 'imagePreview', 'image');
-    setupFilePreview('audioFile', 'audioFilename', 'audio');
-    setupFilePreview('documentFile', 'documentFilename', 'document');
-    setupFilePreview('videoFile', 'videoPreview', 'video');
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(tab => tab.classList.remove('active'));
+
+    // Remove active class from all buttons
+    const tabButtons = document.querySelectorAll('.tab-button');
+    tabButtons.forEach(btn => btn.classList.remove('active'));
+
+    // Show selected tab content
+    document.getElementById(tabName).classList.add('active');
+
+    // Add active class to clicked button
+    event.target.classList.add('active');
+}
+
+// Handle file preview
+function handleFilePreview(input, previewId) {
+    const file = input.files[0];
+    const preview = document.getElementById(previewId);
     
-    // Setup form handlers
-    setupFormHandler('imageForm', 'image');
-    setupFormHandler('audioForm', 'audio');
-    setupFormHandler('documentForm', 'document');
-    setupFormHandler('videoForm', 'video');
-    
-    // Setup operation toggle handlers
-    setupOperationToggle('imageOperation', 'imageSecretDataGroup');
-    setupOperationToggle('audioOperation', 'audioSecretDataGroup');
-    setupOperationToggle('documentOperation', 'documentSecretDataGroup');
-    setupOperationToggle('videoOperation', 'videoSecretDataGroup');
-    
-    // Setup encryption toggle handlers
-    setupEncryptionToggle('imageEncrypt', 'imagePassword');
-    setupEncryptionToggle('audioEncrypt', 'audioPassword');
-    setupEncryptionToggle('documentEncrypt', 'documentPassword');
-    setupEncryptionToggle('videoEncrypt', 'videoPassword');
-    
-    // Helper function to reset all forms
-    function resetAllForms() {
-        document.querySelectorAll('form').forEach(form => {
-            form.reset();
-            // Reset custom toggles
-            form.querySelectorAll('.d-none').forEach(el => {
-                if (el.id.includes('Password')) {
-                    el.classList.add('d-none');
-                }
-            });
-        });
+    if (!file) {
+        preview.style.display = 'none';
+        return;
     }
+
+    preview.style.display = 'block';
+
+    if (previewId === 'imagePreview' && file.type.startsWith('image/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('imageImg').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } else if (previewId === 'videoPreview' && file.type.startsWith('video/')) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            document.getElementById('videoVid').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    } else if (previewId === 'audioPreview') {
+        document.getElementById('audioFileName').textContent = file.name;
+    } else if (previewId === 'documentPreview') {
+        document.getElementById('documentFileName').textContent = file.name;
+    }
+}
+
+// Setup form submission
+function setupFormHandler(type) {
+    const form = document.getElementById(type + 'Form');
     
-    // Helper function for file previews
-    function setupFilePreview(inputId, previewId, type) {
-        const input = document.getElementById(inputId);
-        if (!input) return;
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
         
-        input.addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            const previewContainer = input.parentElement.querySelector('.file-upload-preview');
-            
-            if (!file) {
-                previewContainer.classList.add('d-none');
+        const formData = new FormData();
+        const fileInput = document.getElementById(type + 'File');
+        const file = fileInput.files[0];
+        
+        if (!file) {
+            alert('Please select a file');
+            return;
+        }
+
+        formData.append('file', file);
+        formData.append('fileType', type);
+        formData.append('operation', currentMode);
+        
+        if (currentMode === 'hide') {
+            const secretData = document.getElementById(type + 'SecretData').value;
+            if (!secretData.trim()) {
+                alert('Please enter secret data to hide');
                 return;
             }
-            
-            previewContainer.classList.remove('d-none');
-            
-            if (type === 'image') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    document.getElementById(previewId).src = e.target.result;
-                };
-                reader.readAsDataURL(file);
-            } 
-            else if (type === 'audio' || type === 'document') {
-                document.getElementById(previewId).textContent = file.name;
-            }
-            else if (type === 'video') {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const video = document.getElementById(previewId);
-                    video.src = e.target.result;
-                    video.load();
-                };
-                reader.readAsDataURL(file);
-            }
-        });
-    }
-    
-    // Helper function for operation toggles
-    function setupOperationToggle(operationName, secretDataGroupId) {
-        document.querySelectorAll(`input[name="${operationName}"]`).forEach(radio => {
-            radio.addEventListener('change', function() {
-                const secretGroup = document.getElementById(secretDataGroupId);
-                secretGroup.classList.toggle('d-none', this.value === 'extract');
-            });
-        });
-    }
-    
-    // Helper function for encryption toggles
-    function setupEncryptionToggle(encryptId, passwordId) {
-        document.getElementById(encryptId).addEventListener('change', function() {
-            document.getElementById(passwordId).classList.toggle('d-none', !this.checked);
-        });
-    }
-    
-    // Helper function for form submissions
-    function setupFormHandler(formId, fileType) {
-        const form = document.getElementById(formId);
-        if (!form) return;
+            formData.append('secretData', secretData);
+        }
         
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData();
-            formData.append('file', document.getElementById(`${fileType}File`).files[0]);
-            formData.append('fileType', fileType);
-            formData.append('operation', 
-                document.querySelector(`input[name="${fileType}Operation"]:checked`).value);
-            
-            if (document.querySelector(`input[name="${fileType}Operation"]:checked`).value === 'hide') {
-                formData.append('secretData', document.getElementById(`${fileType}SecretData`).value);
+        const encryptCheckbox = document.getElementById(type + 'Encrypt');
+        if (encryptCheckbox.checked) {
+            const password = document.getElementById(type + 'Password').value;
+            if (!password) {
+                alert('Please enter a password');
+                return;
             }
+            formData.append('password', password);
+        }
+        
+        processFormData(formData, type);
+    });
+}
+
+// Process form data
+function processFormData(formData, fileType) {
+    const submitBtn = document.querySelector(`#${fileType}Form button[type="submit"]`);
+    const originalText = submitBtn.innerHTML;
+    submitBtn.innerHTML = '🔄 Processing...';
+    submitBtn.disabled = true;
+    
+    fetch('/process', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        showModal(data, formData.get('operation'));
+    })
+    .catch(error => {
+        // Restore button state
+        submitBtn.innerHTML = originalText;
+        submitBtn.disabled = false;
+        
+        showModal({error: error.message}, formData.get('operation'));
+    });
+}
+
+// Show modal with results
+function showModal(data, operation) {
+    const modal = document.getElementById('resultsModal');
+    const modalBody = document.getElementById('resultsModalBody');
+    const downloadBtn = document.getElementById('downloadBtn');
+    const modalTitle = document.getElementById('resultsModalTitle');
+    
+    if (data.error) {
+        modalTitle.textContent = 'Error';
+        modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
+        downloadBtn.style.display = 'none';
+    } else if (data.success) {
+        if (operation === 'hide') {
+            modalTitle.textContent = 'Success!';
+            modalBody.innerHTML = `
+                <div class="alert alert-success">Data hidden successfully!</div>
+                <p>Your file is ready to download.</p>`;
+            downloadBtn.style.display = 'inline-block';
             
-            if (document.getElementById(`${fileType}Encrypt`).checked) {
-                formData.append('password', document.getElementById(`${fileType}Password`).value);
+            const downloadUrl = `/download/${encodeURIComponent(data.filename)}?original=${encodeURIComponent(data.original_name)}`;
+            downloadBtn.href = downloadUrl;
+            downloadBtn.setAttribute('download', data.original_name);
+            
+            // Auto-click download after a delay
+            setTimeout(() => {
+                downloadBtn.click();
+            }, 1000);
+        } else {
+            modalTitle.textContent = 'Extracted Data';
+            modalBody.innerHTML = `
+                <div class="alert alert-success">Data extracted successfully!</div>
+                <div style="margin-top: 15px;">
+                    <h6>Extracted Data:</h6>
+                    <div style="padding: 15px; background: rgba(255, 255, 255, 0.1); border-radius: 8px; margin-top: 10px; white-space: pre-wrap;">${data.data}</div>
+                </div>`;
+            downloadBtn.style.display = 'none';
+            
+            // Also populate the extracted data textarea
+            const extractedTextarea = document.getElementById(currentTab + 'ExtractedData');
+            if (extractedTextarea) {
+                extractedTextarea.value = data.data;
             }
-            
-            processFormData(formData, fileType);
-        });
+        }
     }
     
-    // Process form data
-    function processFormData(formData, fileType) {
-        // Show loading state
-        const submitBtn = document.querySelector(`#${fileType}Form button[type="submit"]`);
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
-        submitBtn.disabled = true;
+    modal.classList.add('show');
+}
+
+// Close modal
+function closeModal() {
+    document.getElementById('resultsModal').classList.remove('show');
+}
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Handle checkbox toggles for password fields
+    ['image', 'audio', 'document', 'video'].forEach(type => {
+        const checkbox = document.getElementById(type + 'Encrypt');
+        const passwordField = document.getElementById(type + 'Password');
         
-        fetch('/process', {
-            method: 'POST',
-            body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-            // Restore button state
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            
-            const modal = new bootstrap.Modal(document.getElementById('resultsModal'));
-            const modalBody = document.getElementById('resultsModalBody');
-            const downloadBtn = document.getElementById('downloadBtn');
-            const modalTitle = document.getElementById('resultsModalTitle');
-            
-            if (data.error) {
-                modalTitle.textContent = 'Error';
-                modalBody.innerHTML = `<div class="alert alert-danger">${data.error}</div>`;
-                downloadBtn.classList.add('d-none');
-            } else if (data.success) {
-                if (formData.get('operation') === 'hide') {
-                    modalTitle.textContent = 'Success';
-                    modalBody.innerHTML = `
-                        <div class="alert alert-success">Data hidden successfully!</div>
-                        <p>Your file is ready to download.</p>`;
-                    downloadBtn.classList.remove('d-none');
-                    
-                    // Create a temporary link to force download with correct filename
-                    const downloadUrl = `/download/${encodeURIComponent(data.filename)}?original=${encodeURIComponent(data.original_name)}`;
-                    downloadBtn.href = downloadUrl;
-                    downloadBtn.setAttribute('download', data.original_name);
-                    
-                    // Auto-click the download button after a short delay
-                    setTimeout(() => {
-                        downloadBtn.click();
-                    }, 1000);
-                } else {
-                    modalTitle.textContent = 'Extracted Data';
-                    modalBody.innerHTML = `
-                        <div class="alert alert-success">Data extracted successfully!</div>
-                        <div class="mt-3">
-                            <h6>Extracted Data:</h6>
-                            <div class="p-3 bg-light rounded">${data.data}</div>
-                        </div>`;
-                    downloadBtn.classList.add('d-none');
-                }
-            }
-            modal.show();
-        })
-        .catch(error => {
-            // Restore button state
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-            
-            alert(`Error: ${error.message}`);
+        checkbox.addEventListener('change', function() {
+            passwordField.style.display = this.checked ? 'block' : 'none';
         });
-    }
+    });
+
+    // Setup form handlers
+    ['image', 'audio', 'document', 'video'].forEach(type => {
+        setupFormHandler(type);
+    });
+
+    // Close modal when clicking outside
+    document.addEventListener('click', function(event) {
+        const modal = document.getElementById('resultsModal');
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    // Add floating animation to header
+    const header = document.querySelector('.header h1');
+    setInterval(() => {
+        header.style.transform = 'translateY(' + (Math.sin(Date.now() / 1000) * 5) + 'px)';
+    }, 16);
+
+    // Add hover effects to cards
+    const cards = document.querySelectorAll('.card');
+    cards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
 });
